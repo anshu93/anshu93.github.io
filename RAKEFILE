@@ -1,0 +1,9 @@
+desc 'Publishing the website via git'
+task :deploy do
+  puts 'Publishing your website'
+  message = 'RAKEFILE updated' #Put commit msg here	
+  sh "git add -A"
+  sh "git commit -am '#{message}'"
+  sh "git push origin master"
+  puts 'Your website is now published!'
+end
