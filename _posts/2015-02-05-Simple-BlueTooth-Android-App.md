@@ -5,7 +5,7 @@ date:   2015-01-27 16:34:04
 categories: bicycle intro
 --- 
 
-After realising that I pretty much only used 5 gears out of the possible 21 on my bike, I did some research into what the optimum gear combination would be and found a bunch of research papers such as [this][paper1] and [this][paper2] and more informal articles like [this][paper3] that suggested that there is an optimal cycling cadence that roughly suits everyone. As ridiculous as it seems, from reading all these papers I and two of my friends decided to build a system that could suggest such a gear combination.
+After realising that I pretty much only used 5 gears out of the possible 21 on my bike, I did some research into what the optimum gear combination would be and found a bunch of research papers such as [this][paper1] and [this][paper2] and more informal articles like [this][paper3] that suggested that there is an optimal cycling cadence that roughly suits everyone. As ridiculous as it seems, from reading all these papers I and two of my friends decided it was possible to build a system that could suggest such a gear combination.
 
 The basic premise (for now) is that there are two surfaces: flat and inclined. The optimal RPM on a flat surface is 80-100 RPM and the optimal RPM on an incline is 65-80 RPM. Note that this refers to the RPM of the pedal (aka crank) and is commonly referred to as the cadence.
 
