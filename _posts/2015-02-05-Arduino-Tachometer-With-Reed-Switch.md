@@ -5,8 +5,6 @@ date:   2015-02-06 16:34:04
 categories: bicycle tachometer
 --- 
 
-[Code is hosted at [Github][code]]
-
 <h1> Intro </h1>
 
 One of the big components of the bicycle embedded system is being able to measure a rider's cadence (the RPM of the pedals). To also be able to accurately determine distance, it will be helpful to also know the RPM of one of the wheels of the bike and thus two of these will be used in the final product.
