@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <link href = "css/syntax.css" rel="stylesheet">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Arduino Tachometer with Reed Switch</title>
+  <meta name="description" content="[Code is hosted at Github]">
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://yourdomain.com/bicycle/tachometer/2015/01/27/Arduino-Tachometer-With-Reed-Switch.html">
+  <link rel="alternate" type="application/rss+xml" title="Anshuman Prasad's Blog" href="http://yourdomain.com/feed.xml" />
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">Anshuman Prasad's Blog</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Arduino Tachometer with Reed Switch</h1>
+    <p class="post-meta">Jan 27, 2015</p>
+  </header>
+
+  <article class="post-content">
+    <p>[Code is hosted at <a href="https://github.com/anshu93/BicycleArduino/blob/master/rpm/rpm">Github</a>]</p>
+
+<h1> Intro </h1>
+
+<p>One of the big components of the bicycle embedded system is being able to measure a rider’s cadence (the RPM of the pedals). To also be able to accurately determine distance, it will be helpful to also know the RPM of one of the wheels of the bike and thus two of these will be used in the final product.</p>
+
+<p>The components used are (vendors sites are linked):</p>
+
+<ul>
+  <li><a href="http://www.amazon.com/Neodymium-Magnets-inch-Disc-N48/dp/B001KV38ES/ref=sr_1_1?ie=UTF8&amp;qid=1423125734&amp;sr=8-1&amp;keywords=neodymium+magnet">Neodymium magnets</a></li>
+  <li><a href="https://www.sparkfun.com/products/8642">Reed Switch</a> </li>
+</ul>
+
+<h1> The Reed Switch </h1>
+
+<p>A reed switch that is functionally equivalent to a simple pushbutton that is activated by a strong enough magnetic field (<a href="http://en.wikipedia.org/wiki/Reed_switch">wiki</a>). Reed switches can be Normally Open (NO) or Normally Complete (NC) which means it is by default open in the former and closed in the latter. </p>
+
+<p>The reed switch can be wired up as shown in the figure below with one end in ground and the other in PIN 2 of the Arduino. The internal pins of the Arduino have pull-up resistors which means their default value is ‘HIGH’. Assuming the reed switches are ‘NO’, then PIN 2 will by default read HIGH and when the switch closes under a magnetic field, PIN 2 will read LOW.</p>
+
+<div style="width:image width px; font-size:80%; text-align:center;"><img src="/images/Reed_Switch.png" alt="alternate text" width="width" height="height" style="padding-bottom:0.5em;" /></div>
+<p><br /></p>
+
+<h1> Mounting the Switch and the Magnets </h1>
+
+<p>I managed to find an old wheel lying around and borrowed a wheel mount from my friend and put together a setup shown in the picture below:</p>
+
+<p>The magnets were stuck to the rim and the reed switch held with the help of cardboard about an inch away from the rim. You can test to see if that’s the appropriate distance by simply spinning the wheel slowly and making sure you hear a clicking noise when the magnets pass the switch.</p>
+
+<p><img src="/images/wheel_mount.JPG" width="50%" align="middle" />
+<br /></p>
+
+<h1> Code </h1>
+
+<p>The code is rather simple and has the following setup:</p>
+
+<ul>
+  <li>Initialize variables</li>
+  <li>Setup Interrupts</li>
+  <li>Interrupt handler</li>
+  <li>Calculate RPM in main loop</li>
+</ul>
+
+<p>The code can be found on <a href="https://github.com/anshu93/BicycleArduino/blob/master/rpm/rpm">Github</a>.</p>
+
+<h15><b> Initialize Variables: </b></h15>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="lineno">1</span> <span class="kt">int</span> <span class="n">sense0</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>	<span class="c1">// Reed switch pin</span>
+<span class="lineno">2</span> <span class="k">volatile</span> <span class="n">byte</span> <span class="n">counter0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>	<span class="c1">// Counter</span>
+<span class="lineno">3</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">lastDebounce0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>	<span class="c1">// Time of last observed state change</span>
+<span class="lineno">4</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">debounceDelay</span> <span class="o">=</span> <span class="mi">250</span><span class="p">;</span>  <span class="c1">// Ignore bounces under 250 ms</span>
+<span class="lineno">5</span> <span class="kt">float</span> <span class="n">rpm</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>	<span class="c1">// RPM</span>
+<span class="lineno">6</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeold</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>	<span class="c1">// Time of last measurement</span></code></pre></div>
+
+<p>The first variable is the pin name which will be used during assignment. The second is a counter that is declared as a ‘volatile’ as it is changed in an interrupt service routine (ISR) which is asynchronously fired. The reason this cannot be a simple int is that the compiler will notice that its value is not being changed in the regular code flow and will eliminate what it deems to be ‘extraneous’ code. The ‘volatile’ keyword stops the compiler from optimizing the ISR away. The 3rd and 4th variables have to do with debouncing (mechanical oscillation of a switch leading to false readings). ‘rpm’ and ‘timeold’ are self-explanatory.</p>
+
+<h15><b> Setup Interrupts: </b></h15>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="lineno">1</span> <span class="n">attachInterrupt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">magnet</span><span class="p">,</span> <span class="n">FALLING</span><span class="p">);</span></code></pre></div>
+
+<p>An interrupt is something that can asynchronously point the processor to another block of code which will execute and return to the previous code flow. The attachInterrupt() function of the Arduino takes in the interrupt number (in this case 0 which corresponds to digital PIN 2), the function that will be run and on what edge of the signal the interrupt will be triggered. As the magnet comes towards the switch, the value on PIN 2 goes from 1 to 0 and thus the magnet() function is called on the leading (falling) edge.</p>
+
+<h15><b> Interrupt Handler: </b></h15>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="lineno">1</span> <span class="kt">void</span> <span class="nf">magnet</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno">2</span>   <span class="k">if</span><span class="p">(</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">lastDebounce0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">debounceDelay</span><span class="p">){</span>
+<span class="lineno">3</span>     <span class="n">counter0</span><span class="o">++</span><span class="p">;</span>
+<span class="lineno">4</span>     <span class="n">lastDebounce0</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span>
+<span class="lineno">5</span>   <span class="p">}</span>
+<span class="lineno">6</span> <span class="p">}</span></code></pre></div>
+
+<p>The ISR first checks if it is running beyond the debounce window of (250ms). Thus any change of state between 0-250ms after a change of state is ignored as debouncing. Once it is verified as a valid trigger, the counter is incremented and the time of measurement recorded.</p>
+
+<h15><b> Calculate RPM in main loop: </b></h15>
+
+<div class="highlight"><pre><code class="language-c" data-lang="c"><span class="lineno"> 1</span> <span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+<span class="lineno"> 2</span>   <span class="k">if</span><span class="p">(</span><span class="n">counter0</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">){</span>
+<span class="lineno"> 3</span>     <span class="kt">float</span> <span class="n">time_elapsed</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">/</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">timeold</span><span class="p">);</span>
+<span class="lineno"> 4</span>     <span class="n">rpm</span> <span class="o">=</span> <span class="n">time_elapsed</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="p">(</span><span class="kt">float</span><span class="p">)</span> <span class="n">counter0</span><span class="p">;</span>
+<span class="lineno"> 5</span>     <span class="n">timeold</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span>
+<span class="lineno"> 6</span>     <span class="n">counter0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="lineno"> 7</span>     <span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;rpm: &quot;</span><span class="p">);</span>
+<span class="lineno"> 8</span>     <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">rpm</span><span class="p">);</span>  
+<span class="lineno"> 9</span>   <span class="p">}</span>
+<span class="lineno">10</span> <span class="p">}</span></code></pre></div>
+
+<p>If the wheel has rotated more than 5 times, the time it took is recorded and a simple calculation done to calculate rpm. This is then printed to the Serial monitor for debugging. If the number is increased from 5, the rpm will be averaged over more revolutions but will update slowly whereas if it is lowered from 5, it will update quickly but not be too useful.</p>
+
+<p>This code is extensible to IR based systems as well and can be used for multi-blade applications as long as the calculation is modified.</p>
+
+<p>[Code is hosted at <a href="https://github.com/anshu93/BicycleArduino/blob/master/rpm/rpm">Github</a>]</p>
+
+
+  </article>
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Anshuman Prasad's Blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>Anshuman Prasad's Blog</li>
+          <li><a href="mailto:anshuman.prasad93@gmail.com">anshuman.prasad93@gmail.com</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/anshu93">
+              <span class="icon  icon--github">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+                </svg>
+              </span>
+
+              <span class="username">anshu93</span>
+            </a>
+          </li>
+          
+
+          
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-3">
+        <p class="text">A blog by a Duke University senior covering most of the projects I've undertaken.
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

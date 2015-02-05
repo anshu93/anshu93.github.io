@@ -6,13 +6,13 @@
 </description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 05 Feb 2015 04:16:46 -0500</pubDate>
-    <lastBuildDate>Thu, 05 Feb 2015 04:16:46 -0500</lastBuildDate>
+    <pubDate>Thu, 05 Feb 2015 05:28:37 -0500</pubDate>
+    <lastBuildDate>Thu, 05 Feb 2015 05:28:37 -0500</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
         <title>Intro to the Bicycle Embedded System</title>
-        <description>&lt;p&gt;After realising that I pretty much only used 5 gears out of the possible 21 on my bike, I did some research into what the optimum gear combination would be and found a bunch of research papers such as &lt;a href=&quot;http://jap.physiology.org/content/51/2/447&quot;&gt;this&lt;/a&gt; and &lt;a href=&quot;http://link.springer.com/article/10.1007/s004210050634&quot;&gt;this&lt;/a&gt; and more informal articles like &lt;a href=&quot;http://www.spinning.com/community/the-science-of-optimal-cycling-cadence/&quot;&gt;this&lt;/a&gt; that suggested that there is an optimal cycling cadence that roughly suits everyone. As ridiculous as it seems, from reading all these papers I and two of my friends decided it was possible to build a system that could suggest such a gear combination.&lt;/p&gt;
+        <description>&lt;p&gt;After realising that I pretty much only used 5 gears out of the possible 21 on my bike, I did some research into what the optimum gear combination would be and found a bunch of research papers such as &lt;a href=&quot;http://jap.physiology.org/content/51/2/447&quot;&gt;this&lt;/a&gt; and &lt;a href=&quot;http://link.springer.com/article/10.1007/s004210050634&quot;&gt;this&lt;/a&gt; and more informal articles like &lt;a href=&quot;http://www.spinning.com/community/the-science-of-optimal-cycling-cadence/&quot;&gt;this&lt;/a&gt; that suggested there is an optimal cycling cadence that roughly suits everyone. As ridiculous as it seems, from reading all these papers I and two of my friends decided it was possible to build a system that could suggest such a gear combination.&lt;/p&gt;
 
 &lt;p&gt;The basic premise (for now) is that there are two surfaces: flat and inclined. The optimal RPM on a flat surface is 80-100 RPM and the optimal RPM on an incline is 65-80 RPM. Note that this refers to the RPM of the pedal (aka crank) and is commonly referred to as the cadence.&lt;/p&gt;
 
@@ -56,6 +56,111 @@
         <category>bicycle</category>
         
         <category>intro</category>
+        
+      </item>
+    
+      <item>
+        <title>Arduino Tachometer with Reed Switch</title>
+        <description>&lt;p&gt;[Code is hosted at &lt;a href=&quot;https://github.com/anshu93/BicycleArduino/blob/master/rpm/rpm&quot;&gt;Github&lt;/a&gt;]&lt;/p&gt;
+
+&lt;h1&gt; Intro &lt;/h1&gt;
+
+&lt;p&gt;One of the big components of the bicycle embedded system is being able to measure a rider’s cadence (the RPM of the pedals). To also be able to accurately determine distance, it will be helpful to also know the RPM of one of the wheels of the bike and thus two of these will be used in the final product.&lt;/p&gt;
+
+&lt;p&gt;The components used are (vendors sites are linked):&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.amazon.com/Neodymium-Magnets-inch-Disc-N48/dp/B001KV38ES/ref=sr_1_1?ie=UTF8&amp;amp;qid=1423125734&amp;amp;sr=8-1&amp;amp;keywords=neodymium+magnet&quot;&gt;Neodymium magnets&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.sparkfun.com/products/8642&quot;&gt;Reed Switch&lt;/a&gt; &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1&gt; The Reed Switch &lt;/h1&gt;
+
+&lt;p&gt;A reed switch that is functionally equivalent to a simple pushbutton that is activated by a strong enough magnetic field (&lt;a href=&quot;http://en.wikipedia.org/wiki/Reed_switch&quot;&gt;wiki&lt;/a&gt;). Reed switches can be Normally Open (NO) or Normally Complete (NC) which means it is by default open in the former and closed in the latter. &lt;/p&gt;
+
+&lt;p&gt;The reed switch can be wired up as shown in the figure below with one end in ground and the other in PIN 2 of the Arduino. The internal pins of the Arduino have pull-up resistors which means their default value is ‘HIGH’. Assuming the reed switches are ‘NO’, then PIN 2 will by default read HIGH and when the switch closes under a magnetic field, PIN 2 will read LOW.&lt;/p&gt;
+
+&lt;div style=&quot;width:image width px; font-size:80%; text-align:center;&quot;&gt;&lt;img src=&quot;/images/Reed_Switch.png&quot; alt=&quot;alternate text&quot; width=&quot;width&quot; height=&quot;height&quot; style=&quot;padding-bottom:0.5em;&quot; /&gt;&lt;/div&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1&gt; Mounting the Switch and the Magnets &lt;/h1&gt;
+
+&lt;p&gt;I managed to find an old wheel lying around and borrowed a wheel mount from my friend and put together a setup shown in the picture below:&lt;/p&gt;
+
+&lt;p&gt;The magnets were stuck to the rim and the reed switch held with the help of cardboard about an inch away from the rim. You can test to see if that’s the appropriate distance by simply spinning the wheel slowly and making sure you hear a clicking noise when the magnets pass the switch.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/wheel_mount.JPG&quot; width=&quot;50%&quot; align=&quot;middle&quot; /&gt;
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1&gt; Code &lt;/h1&gt;
+
+&lt;p&gt;The code is rather simple and has the following setup:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Initialize variables&lt;/li&gt;
+  &lt;li&gt;Setup Interrupts&lt;/li&gt;
+  &lt;li&gt;Interrupt handler&lt;/li&gt;
+  &lt;li&gt;Calculate RPM in main loop&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The code can be found on &lt;a href=&quot;https://github.com/anshu93/BicycleArduino/blob/master/rpm/rpm&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h15&gt;&lt;b&gt; Initialize Variables: &lt;/b&gt;&lt;/h15&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sense0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;c1&quot;&gt;// Reed switch pin&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;volatile&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;counter0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;c1&quot;&gt;// Counter&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastDebounce0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;c1&quot;&gt;// Time of last observed state change&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;debounceDelay&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;250&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Ignore bounces under 250 ms&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rpm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;c1&quot;&gt;// RPM&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeold&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;c1&quot;&gt;// Time of last measurement&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The first variable is the pin name which will be used during assignment. The second is a counter that is declared as a ‘volatile’ as it is changed in an interrupt service routine (ISR) which is asynchronously fired. The reason this cannot be a simple int is that the compiler will notice that its value is not being changed in the regular code flow and will eliminate what it deems to be ‘extraneous’ code. The ‘volatile’ keyword stops the compiler from optimizing the ISR away. The 3rd and 4th variables have to do with debouncing (mechanical oscillation of a switch leading to false readings). ‘rpm’ and ‘timeold’ are self-explanatory.&lt;/p&gt;
+
+&lt;h15&gt;&lt;b&gt; Setup Interrupts: &lt;/b&gt;&lt;/h15&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;attachInterrupt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;magnet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FALLING&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;An interrupt is something that can asynchronously point the processor to another block of code which will execute and return to the previous code flow. The attachInterrupt() function of the Arduino takes in the interrupt number (in this case 0 which corresponds to digital PIN 2), the function that will be run and on what edge of the signal the interrupt will be triggered. As the magnet comes towards the switch, the value on PIN 2 goes from 1 to 0 and thus the magnet() function is called on the leading (falling) edge.&lt;/p&gt;
+
+&lt;h15&gt;&lt;b&gt; Interrupt Handler: &lt;/b&gt;&lt;/h15&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;magnet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;2&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;millis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lastDebounce0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;debounceDelay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;3&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;counter0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;4&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;lastDebounce0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;millis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;5&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The ISR first checks if it is running beyond the debounce window of (250ms). Thus any change of state between 0-250ms after a change of state is ignored as debouncing. Once it is verified as a valid trigger, the counter is incremented and the time of measurement recorded.&lt;/p&gt;
+
+&lt;h15&gt;&lt;b&gt; Calculate RPM in main loop: &lt;/b&gt;&lt;/h15&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;loop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;counter0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt;     &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time_elapsed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;millis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;timeold&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;rpm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time_elapsed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;counter0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;timeold&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;millis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;counter0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;Serial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;rpm: &amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;Serial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rpm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;  
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;If the wheel has rotated more than 5 times, the time it took is recorded and a simple calculation done to calculate rpm. This is then printed to the Serial monitor for debugging. If the number is increased from 5, the rpm will be averaged over more revolutions but will update slowly whereas if it is lowered from 5, it will update quickly but not be too useful.&lt;/p&gt;
+
+&lt;p&gt;This code is extensible to IR based systems as well and can be used for multi-blade applications as long as the calculation is modified.&lt;/p&gt;
+
+&lt;p&gt;[Code is hosted at &lt;a href=&quot;https://github.com/anshu93/BicycleArduino/blob/master/rpm/rpm&quot;&gt;Github&lt;/a&gt;]&lt;/p&gt;
+
+</description>
+        <pubDate>Tue, 27 Jan 2015 11:34:04 -0500</pubDate>
+        <link>http://yourdomain.com/bicycle/tachometer/2015/01/27/Arduino-Tachometer-With-Reed-Switch.html</link>
+        <guid isPermaLink="true">http://yourdomain.com/bicycle/tachometer/2015/01/27/Arduino-Tachometer-With-Reed-Switch.html</guid>
+        
+        
+        <category>bicycle</category>
+        
+        <category>tachometer</category>
         
       </item>
     

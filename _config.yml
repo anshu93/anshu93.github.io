@@ -2,7 +2,7 @@
 title: Anshuman Prasad's Blog
 email: anshuman.prasad93@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
-  A blog by a Duke University senior covering most of the projects I've undertaken.
+  A blog by a Duke University senior covering the engineering projects I've undertaken.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://yourdomain.com" # the base hostname & protocol for your site
 github_username:  anshu93
