@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Intro to the Bicycle Embedded System"
-date:   2015-01-27 16:34:04
+date:   2015-02-05 16:34:04
 categories: bicycle intro
 --- 
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Arduino Tachometer with Reed Switch"
-date:   2015-02-05 16:34:04
+date:   2015-02-06 16:34:04
 categories: bicycle tachometer
 --- 
 
